@@ -3,13 +3,11 @@ def isNum(tok):
 
 
 def isOp(tok):
-    return tok in '+-*/('
+    return tok in '+*/('
 
 
 def whatOp(tok):
     match tok:
-        case '-':
-            return -1
         case '+':
             return 1
         case '*':

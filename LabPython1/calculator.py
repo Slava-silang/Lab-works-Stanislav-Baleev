@@ -28,10 +28,18 @@ def polishCalc(expretion):          #the main function to calculate expretion
     operand = []                    #list with operands
 
     expretion = '0' + expretion
-    expretion = expretion.replace('(', '(0')  #exclude variant when we have negative number
+    expretion = expretion.replace('(', '(0')  #made to exclude errors with negative numbers
 
     while token := expretion[:1]:
         expretion = expretion[1:]
+
+        if token == '-':                              #we need special work with negative numbers, otherwise
+            num, expretion = negNum(expretion)        #python cant calculate them right
+            while operand:
+                res = clearing(operand.pop(), operation.pop(), operation.pop())
+                operation.append(res)
+            operation.append(num)
+            operand.append(1)
 
         if isNum(token):                               #if meet number - get it and add to stack
             num, expretion = makeNum(token, expretion)
@@ -48,10 +56,13 @@ def polishCalc(expretion):          #the main function to calculate expretion
             operand.append(op)
 
     while operand:                                     #final calculating
-        res = clearing(operand.pop(), operation.pop(), operation.pop())
-        operation.append(res)
-
+        res = clearing(operand.pop(), operation.pop(), operation.pop())  #this code repeats three times because
+        operation.append(res)                                            #we always need to work with original stack
+                                                                         #otherwise it has numbers we already work with
     return operation.pop()
 
 
-print(polishCalc('20+3*6-2'))
+print(polishCalc('-2.6-3+5*5'))
+
+#Текущие задачи: добавить работу со скобками и сделать отдельную функцию для очищения стека
+
