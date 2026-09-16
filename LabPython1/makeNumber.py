@@ -1,4 +1,4 @@
-def makeNum(tok, exp):              #makes positive number with its characters
+def makeNum(tok, exp):
     number = tok
     count = 0
     for i in exp:
@@ -10,7 +10,7 @@ def makeNum(tok, exp):              #makes positive number with its characters
     return float(number), exp[count:]
 
 
-def negNum(exp):                    #makes negative numbers
+def negNum(exp):
     number = ""
     count = 0
     for i in exp:

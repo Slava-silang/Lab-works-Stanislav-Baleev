@@ -1,68 +1,65 @@
 from chek import *
 from makeNumber import *
+from processes import *
 
 
-def clearing(opnd, opon2, opon1):    #made to clear stack: calculate exp that we already have
+def polishCalc(expretion):
 
-    second = opon2
-    first = opon1
-
-    match opnd:                      #cheking kind of operand
-        case -1:
-            res = first - second
-        case 1:
-            res = first + second
-        case 2:
-            res = first * second
-        case -2:
-            res = first / second
-        case _:
-            res = 0
-            raise SyntaxError('Unknown operand')
-
-    return res
-
-
-def polishCalc(expretion):          #the main function to calculate expretion
-    operation = []                  #list with numbers
-    operand = []                    #list with operands
+    operation = []
+    operand = []
+    #make stack for operands and operations
 
     expretion = '0' + expretion
-    expretion = expretion.replace('(', '(0')  #made to exclude errors with negative numbers
+    expretion = expretion.replace('(', '(0')
+    expretion = expretion.replace('0(', '(')
 
     while token := expretion[:1]:
+
         expretion = expretion[1:]
 
-        if token == '-':                              #we need special work with negative numbers, otherwise
-            num, expretion = negNum(expretion)        #python cant calculate them right
-            while operand:
-                res = clearing(operand.pop(), operation.pop(), operation.pop())
-                operation.append(res)
+        if token == '-':
+            #we need a special treatment for negative numbers
+            num, expretion = negNum(expretion)
+            operand, operation = clearing(operand, operation)
             operation.append(num)
             operand.append(1)
 
-        if isNum(token):                               #if meet number - get it and add to stack
-            num, expretion = makeNum(token, expretion)
-            operation.append(num)
+        elif isNum(token):
 
-        if isOp(token):                                #if meet operand - try to make calc or just add it to stack
+            num, expretion = makeNum(token, expretion)
+            #make number
+            operation.append(num)
+            #and put it to stack
+
+        elif isOp(token):
+
             op = whatOp(token)
 
-            if operand and abs(operand[-1]) > abs(op):
-                while operand:                         #if met "(" or "+" after "*" - make calc and go next
-                    res = clearing(operand.pop(), operation.pop(), operation.pop())
-                    operation.append(res)
+            ex = expretion[0]
+            #we need to look at the next character if it is "("
+
+            if operand and abs(operand[-1]) > abs(op) or ex == '(' and len(operation) > 1:
+                #chek all options to make sure it is not exception
+                operand, operation = clearing(operand, operation)
 
             operand.append(op)
 
-    while operand:                                     #final calculating
-        res = clearing(operand.pop(), operation.pop(), operation.pop())  #this code repeats three times because
-        operation.append(res)                                            #we always need to work with original stack
-                                                                         #otherwise it has numbers we already work with
+            if ex == '(' and op != 0:
+                #if we did not put "(" to stack before
+                operand.append(0)
+                expretion = expretion[1:]
+
+        elif token == ')':
+            #special treatment to closing branch
+            operand, operation = clearing(operand, operation, 0)
+        else:
+            #to warn user about mistake
+            raise SyntaxError("Sorry, you wrote unknown symbol")
+
+    operand, operation = clearing(operand, operation)
+    #clear stack when it is the end
+
     return operation.pop()
 
 
-print(polishCalc('-2.6-3+5*5'))
-
-#Текущие задачи: добавить работу со скобками и сделать отдельную функцию для очищения стека
-
+print(polishCalc('((5+4)+(7+9)*4)*7'))
