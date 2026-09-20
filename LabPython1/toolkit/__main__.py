@@ -1,7 +1,7 @@
 import sys
 import argparse
-import calculator
-import converter
+from . import calculator
+from . import converter
 
 if sys.argv[1] == "calc":
     calculator.polishCalc(sys.argv[2])

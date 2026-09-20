@@ -1,10 +1,17 @@
-from chek import *
-from makeNumber import *
-from processes import *
+from . import chek, makeNumber, processes
+def processing(expretion):
+    expretion = '0' + expretion
+    expretion = expretion.replace('(', '(0')
+    expretion = expretion.replace('0(', '(')
+    # for correct work with negative numbers
 
+    expretion = expretion.replace('--', '-1')
+    expretion = expretion.replace('++', '+1')
 
+    expretion = expretion.replace(' ', '')
+
+    return expretion
 def polishCalc(expretion):
-
     if len(expretion) == 0:
         raise ValueError("Sorry, your expretion is incorrect")
 
@@ -12,16 +19,7 @@ def polishCalc(expretion):
     operand = []
     #make stack for operands and operations
 
-    expretion = '0' + expretion
-    expretion = expretion.replace('(', '(0')
-    expretion = expretion.replace('0(', '(')
-    #for correct work with negative numbers
-
-    expretion = expretion.replace('--', '-1')
-    expretion = expretion.replace('++', '+1')
-
-    expretion = expretion.replace(' ', '')
-    #we do not need space
+    expretion = processing(expretion)
 
     while token := expretion[:1]:
 
@@ -31,25 +29,25 @@ def polishCalc(expretion):
         #we need to look at next character
         if token == '-' and ex != '(':
             #we need a special treatment for negative numbers
-            num, expretion = negNum(expretion)
-            operand, operation = clearing(operand, operation)
+            num, expretion = makeNumber.negNum(expretion)
+            operand, operation = processes.clearing(operand, operation)
             operation.append(num)
             operand.append(1)
             """If program meet minus it makes a number negative and replace - with +"""
 
-        elif isNum(token):
+        elif chek.isNum(token):
 
-            num, expretion = makeNum(token, expretion)
+            num, expretion = makeNumber.makeNum(token, expretion)
             operation.append(num)
             """Makes number and put it to stack"""
 
-        elif isOp(token):
+        elif chek.isOp(token):
 
-            op = whatOp(token)
+            op = chek.whatOp(token)
 
             if (operand and abs(operand[-1]) > abs(op) or ex == '(') and len(operation) > 1:
                 #chek all options to make sure it is not exception
-                operand, operation = clearing(operand, operation)
+                operand, operation = processes.clearing(operand, operation)
             """Makes possible calculating with numbers before branch"""
 
             operand.append(op)
@@ -62,7 +60,7 @@ def polishCalc(expretion):
 
         elif token == ')':
             #special treatment to closing branch
-            operand, operation = clearing(operand, operation, 0)
+            operand, operation = processes.clearing(operand, operation, 0)
             """Meeting closing branch we make all possible calculating till first opening branch"""
 
         elif token == '-' and ex == '(':
@@ -75,10 +73,7 @@ def polishCalc(expretion):
             #to warn user about mistake
             raise SyntaxError("Sorry, you wrote unknown symbol")
 
-    operand, operation = clearing(operand, operation)
+    operand, operation = processes.clearing(operand, operation)
     """clears stack when it is the end"""
 
-    return operation.pop()
-
-
-print(polishCalc('-3-((2+5)*(4-2))'))
+    print(operation.pop())
