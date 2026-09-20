@@ -17,6 +17,9 @@ def polishCalc(expretion):
     expretion = expretion.replace('0(', '(')
     #for correct work with negative numbers
 
+    expretion = expretion.replace('--', '-1')
+    expretion = expretion.replace('++', '+1')
+
     expretion = expretion.replace(' ', '')
     #we do not need space
 
@@ -78,4 +81,4 @@ def polishCalc(expretion):
     return operation.pop()
 
 
-print(polishCalc('1+(-2)'))
+print(polishCalc('-3-((2+5)*(4-2))'))
