@@ -1,7 +1,7 @@
 import argparse
 import sys
 
-from . import calculator, converter, errors
+from . import calculator, converter, errors, history
 
 
 def help_user():
@@ -40,36 +40,39 @@ def help_user():
     |___________________________________________________________|
     """)
 
+def main():
+    if len(sys.argv) < 2 or sys.argv[1] == "--help":
 
-if len(sys.argv) < 2 or sys.argv[1] == "--help":
-
-    help_user()
-
-elif sys.argv[1] == "calc":
-
-    result_og_checking = errors.check_expretion(sys.argv[2])
-
-    if result_og_checking != 1:
-
-        raise SyntaxError(result_og_checking)
-
-    print(calculator.polish_calc(sys.argv[2]))
-
-elif sys.argv[1] == "converter":
-
-    if len(sys.argv) < 5:
         help_user()
 
-    parser = argparse.ArgumentParser()
+    elif sys.argv[1] == "calc":
 
-    parser.add_argument('amount')
-    parser.add_argument('--from', dest="from_")
-    parser.add_argument('--to', dest="to")
+        errors.check_expression(sys.argv[2])
 
-    args = parser.parse_args()
+        result = calculator.polish_calc(sys.argv[2])
+        history.save_history(sys.argv[2], result)
+        print(result)
 
-    converter.converter(args.amount, args.from_, args.to)
+    elif sys.argv[1] == "convert":
 
-else:
+        if len(sys.argv) < 5:
+            help_user()
 
-    help_user()
+        parser = argparse.ArgumentParser()
+
+        parser.add_argument('command')
+        parser.add_argument('amount')
+        parser.add_argument('--from', dest="from_")
+        parser.add_argument('--to', dest="to")
+
+        args = parser.parse_args()
+
+        print(converter.converter(args.amount, args.from_, args.to))
+
+    else:
+
+        help_user()
+
+
+if __name__ == "__main__":
+    main()

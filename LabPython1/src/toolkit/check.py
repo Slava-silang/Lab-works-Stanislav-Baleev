@@ -3,7 +3,7 @@ def is_num(tok):
 
 
 def is_operand(tok):
-    return tok in '+*/('
+    return tok in '+*/(|%'
 
 
 def what_operand(tok):

@@ -17,7 +17,7 @@ def calculating(opnd, opon2, opon1):
         case -3:
             res = first // second
         case 3:
-            res = first % second
+            res = first - (first // second) * second
 
     return res
 

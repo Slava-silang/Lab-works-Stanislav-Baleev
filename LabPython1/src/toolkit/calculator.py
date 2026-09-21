@@ -1,76 +1,77 @@
 from . import check, make_number, processes
 
 
-def processing(expretion):
+def processing(expression):
+    expression = '0' + expression
+    expression = expression.replace('(', '(0')
+    expression = expression.replace('0(', '(')
+    """For correct work with negative numbers we need to change work, 
+    otherwise program counting -2-3 gives -1, but 0-2-3 gives correct answer"""
 
-    expretion = '0' + expretion
-    expretion = expretion.replace('(', '(0')
-    expretion = expretion.replace('0(', '(')
-    # for correct work with negative numbers
+    expression = expression.replace('--', '-1+')
+    expression = expression.replace('++', '1+')
+    expression = expression.replace('//', '|')
+    """Makes easier to work with double operands"""
 
-    expretion = expretion.replace('--', '-1+')
-    expretion = expretion.replace('++', '1+')
-    expretion = expretion.replace('//', '|')
+    expression = expression.replace(' ', '')
+    """Makes work easier because we dont need to process spaces"""
 
-    expretion = expretion.replace(' ', '')
+    return expression
 
-    return expretion
-def polish_calc(expretion):
 
+def polish_calc(expression):
     operation = []
     operand = []
-    #make stack for operands and operations
+    """Makes stack for operands and operation"""
 
-    expretion = processing(expretion)
+    expression = processing(expression)
 
-    while token := expretion[:1]:
+    while token := expression[:1]:
 
-        expretion = expretion[1:]
-        #cut our expretion
-        ex = expretion[0] if len(expretion) > 0 else ""
-        #we need to look at next character
+        expression = expression[1:]
+
+        ex = expression[0] if len(expression) > 0 else ""
+
         if token == '-' and ex != '(':
-            #we need a special treatment for negative numbers
-            num, expretion = make_number.neg_num(expretion)
+            """Makes negative numbers, instead of using minus uses + with negative number"""
+
+            num, expression = make_number.neg_num(expression)
             operand, operation = processes.clearing(operand, operation)
             operation.append(num)
             operand.append(1)
-            """If program meet minus it makes a number negative and replace - with +"""
 
         elif check.is_num(token):
-
-            num, expretion = make_number.make_num(token, expretion)
-            operation.append(num)
             """Makes number and put it to stack"""
+            num, expression = make_number.make_num(token, expression)
+            operation.append(num)
 
         elif check.is_operand(token):
 
             op = check.what_operand(token)
 
             if (operand and abs(operand[-1]) > abs(op) or ex == '(') and len(operation) > 1:
-                #chek all options to make sure it is not exception
+
                 operand, operation = processes.clearing(operand, operation)
-            """Makes possible calculating with numbers before branch"""
+                """Makes possible calculating with numbers before branch"""
 
             operand.append(op)
 
             if ex == '(' and op != 0:
-
                 operand.append(0)
-                expretion = expretion[1:]
-            """It helps to avoid a mistake if branch is the first character"""
+                expression = expression[1:]
+                """It helps to avoid a mistake if branch is the first character"""
 
         elif token == ')':
-            #special treatment to closing branch
+
             operand, operation = processes.clearing(operand, operation, 0)
             """Meeting closing branch we make all possible calculating till first opening branch"""
 
         elif token == '-' and ex == '(':
-            #special treatment for negative expretion in branches
+
             operand.append(1)
             operand.append(-0.1)
-            expretion = expretion[1:]
-            """Program goes to the end of expretion, calculates it and makes negative"""
+            expression = expression[1:]
+            """Program goes to the end of expression, calculates it and makes negative"""
 
     operand, operation = processes.clearing(operand, operation)
     """clears stack when it is the end"""
