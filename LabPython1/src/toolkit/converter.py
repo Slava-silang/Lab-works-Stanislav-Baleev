@@ -1,13 +1,10 @@
 import json
-from pathlib import Path
 
 from . import constants
 
 
-CONFIG_PATH = Path(__file__).resolve().parents[2] / "config" / "units.json"
-
 def load_units():
-    with open(CONFIG_PATH, "r", encoding="utf-8") as file:
+    with open(constants.CONFIG_PATH, "r", encoding="utf-8") as file:
         return json.load(file)
 
 def converter(amount, from_, to):

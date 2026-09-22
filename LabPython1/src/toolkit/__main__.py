@@ -17,6 +17,15 @@ def help_user():
     |    Examples:                                              |
     |        python -m toolkit calc "2 + 2"                     |
     |        python -m toolkit calc "(10 + 5) * 2"              |
+    |     Kinds of operation that are possible                  |
+    |         + plus                                            |
+    |         - minus                                           |
+    |         * multiply                                        |
+    |         / divide                                          |
+    |         ++ unary plus                                     |
+    |         -- unary minus                                    |
+    |         % mod                                             |
+    |         // integer division                               |
     |convert <value> --from <unit> --to <unit>                  |
     |    Convert a value from one unit to another.              |
     |    Arguments:                                             |
@@ -66,6 +75,8 @@ def main():
         parser.add_argument('--to', dest="to")
 
         args = parser.parse_args()
+
+        errors.check_units(amount=args.amount, from_=args.from_, to=args.to)
 
         print(converter.converter(args.amount, args.from_, args.to))
 
