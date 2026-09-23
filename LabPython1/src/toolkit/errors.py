@@ -3,35 +3,56 @@ from re import findall
 
 from . import constants
 
-
-def check_expression(expression: str):
-    if len(expression) < 0:
+def check_expression(expression: str = ""):
+    if len(expression) == 0:
         raise ValueError("Sorry, your expression is empty.")
 
-    if expression.count(")") < expression.count("("):
-        raise SyntaxError("Sorry, you forgot to close the branch.")
+    if '..' in expression:
+        raise SyntaxError("Sorry, your expression is incorrect")
 
-    if expression.count(")") > expression.count("("):
-        raise SyntaxError("Sorry, you forgot to open the branch.")
+    if len(findall(r"[-+/*%]\)|\([*/%]", expression)):
+        raise SyntaxError("Sorry, your expression is incorrect")
 
-    if expression.count('/0') - expression.count('/0.') != 0:
-        raise ValueError("Sorry, dividing by zero is impossible.")
+    if '()' in expression:
+        raise SyntaxError("Sorry, your expression is incorrect")
 
-    if len(findall(r"/0\.(0)+", expression)) != len(findall(r"/0\.(0)+[123456789]", expression)):
-        raise ValueError("Sorry, dividing by zero is impossible.")
-
-    if len(findall(r"([*%]{2})|([+-/]{3})|(\w[+-]{2}\w)|[*%][-+*/%]|[-+*/%][*%]|\w[+-]{2}", expression)):
-        raise SyntaxError("Sorry, your expression is incorrect.")
+    branches = []
 
     for i in range(len(expression)):
 
-        if expression[i] in '-/+' and expression[i-1] in '-/+' and expression[i] != expression[i+1]:
-            raise SyntaxError("Sorry, your expression is incorrect.")
+        allowed = '0123456789-+/*%().'
 
-        allowed = '0123456789-+/*%'
+        if i == len(expression) - 1 and expression[i] in '-+':
+            raise SyntaxError("Sorry, your expression is incorrect")
 
         if expression[i] not in allowed:
             raise SyntaxError(f"Sorry, unknown character {expression[i]}")
+
+        if expression[i] == '(':
+            branches.append(0)
+
+        if expression[i] == ')':
+            branches.append(1)
+
+    if len(branches) > 0 and (branches[0] == 1 or branches[-1] == 0 or branches.count(0) != branches.count(1)):
+        raise SyntaxError("Sorry, your branches is incorrect")
+
+    if len(branches) == len(expression):
+        raise ValueError("Sorry, your expression is empty")
+
+    opened = []
+    for i in branches:
+
+        if i == '(':
+            opened.append(1)
+
+        if i == ')':
+
+            if len(opened) == 0:
+                raise SyntaxError("Sorry, your branches is incorrect")
+
+            else:
+                opened.pop()
 
 
 def check_units(amount: float, from_: str, to: str):

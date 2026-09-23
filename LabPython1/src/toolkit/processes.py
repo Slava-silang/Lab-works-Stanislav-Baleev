@@ -1,47 +1,57 @@
-def calculating(opnd, opon2, opon1):
-    second = opon2
-    first = opon1
+def calculating(operator: int, second: float, first: float):
     res = 0
 
-    match opnd:
-        case -1:
-            res = first - second
-        case 1:
-            res = first + second
-        case 2:
-            res = first * second
-        case -2:
-            res = first / second
-        case -1:
-            res = first - second
+    match operator:
         case -3:
-            res = first // second
+            if second == 0:
+                raise ZeroDivisionError("Sorry, we cannot divide by zero")
+            return first // second
+
+        case -2:
+            if second == 0:
+                raise ZeroDivisionError("Sorry, we cannot divide by zero")
+            return first / second
+
+        case -1:
+            return first - second
+
+        case 1:
+            return first + second
+
+        case 2:
+            return first * second
+
         case 3:
-            res = first - (first // second) * second
+            if second == 0:
+                raise ZeroDivisionError("Sorry, we cannot divide by zero")
+            return first % second
 
     return res
 
 
-def clearing(operand, operation, status=1):
-    if status:
+def priority(operator: int):
+    if operator in [1, -1]:
+        return 1
 
-        while operand and operand[-1] not in [0, -0.1]:
-            res = calculating(operand.pop(), operation.pop(), operation.pop())
-            operation.append(res)
+    if operator in (2, -2, -3, 3):
+        return 2
 
-    else:
+    return 0
 
-        while operand and operand[-1] not in [0, -0.1]:
 
-            res = calculating(operand.pop(), operation.pop(), operation.pop())
-            operation.append(res)
+def clearing(operators: list, numbers: list):
+    if not operators:
+        return operators, numbers
 
-        if operand[-1] == 0:
+    if len(numbers) < 2:
+        raise SyntaxError("Sorry, your expression is incorrect")
 
-            operand.pop()
-        elif operand[-1] == -0.1:
+    operator = operators.pop()
 
-            operand.pop()
-            operation[-1] = operation[-1] * (-1)
+    second = numbers.pop()
+    first = numbers.pop()
 
-    return operand, operation
+    result = calculating(operator, second, first)
+    numbers.append(result)
+
+    return operators, numbers

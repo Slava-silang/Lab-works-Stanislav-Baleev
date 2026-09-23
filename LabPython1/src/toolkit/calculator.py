@@ -1,18 +1,7 @@
-from . import check, make_number, processes
+from . import check, make_number, processes, errors
 
 
 def processing(expression):
-    expression = '0' + expression
-    expression = expression.replace('(', '(0')
-    expression = expression.replace('0(', '(')
-    """For correct work with negative numbers we need to change work, 
-    otherwise program counting -2-3 gives -1, but 0-2-3 gives correct answer"""
-
-    expression = expression.replace('--', '-1+')
-    expression = expression.replace('++', '1+')
-    expression = expression.replace('//', '|')
-    """Makes easier to work with double operands"""
-
     expression = expression.replace(' ', '')
     """Makes work easier because we dont need to process spaces"""
 
@@ -20,60 +9,78 @@ def processing(expression):
 
 
 def polish_calc(expression):
-    operation = []
-    operand = []
-    """Makes stack for operands and operation"""
+    numbers = []
+    operators = []
+    """Makes stack for operands and numbers"""
 
     expression = processing(expression)
+    errors.check_expression(expression)
 
-    while token := expression[:1]:
+    i = 0
+    expecting_numbers = True
 
-        expression = expression[1:]
+    while i < len(expression):
 
-        ex = expression[0] if len(expression) > 0 else ""
+        token = expression[i]
 
-        if token == '-' and ex != '(':
-            """Makes negative numbers, instead of using minus uses + with negative number"""
+        if check.is_num(token):
+            start = i
 
-            num, expression = make_number.neg_num(expression)
-            operand, operation = processes.clearing(operand, operation)
-            operation.append(num)
-            operand.append(1)
+            number, i = make_number.make_num(expression, i, start)
 
-        elif check.is_num(token):
-            """Makes number and put it to stack"""
-            num, expression = make_number.make_num(token, expression)
-            operation.append(num)
+            numbers.append(number)
+            expecting_numbers = False
+            continue
 
-        elif check.is_operand(token):
+        if token == '+' and expecting_numbers:
+            i += 1
+            continue
 
-            op = check.what_operand(token)
+        if token == '-' and expecting_numbers:
+            i += 1
+            start = i
 
-            if (operand and abs(operand[-1]) > abs(op) or ex == '(') and len(operation) > 1:
+            number, i = make_number.make_num(expression, i, start)
+            numbers.append(-number)
+            expecting_numbers = False
+            continue
 
-                operand, operation = processes.clearing(operand, operation)
-                """Makes possible calculating with numbers before branch"""
+        if token == '(':
+            operators.append(0)
+            expecting_numbers = True
+            i += 1
+            continue
 
-            operand.append(op)
+        if token == ')':
 
-            if ex == '(' and op != 0:
-                operand.append(0)
-                expression = expression[1:]
-                """It helps to avoid a mistake if branch is the first character"""
+            while operators and operators[-1] != 0:
+                operators, numbers = processes.clearing(operators, numbers)
 
-        elif token == ')':
+            operators.pop()
+            expecting_numbers = False
+            i += 1
+            continue
 
-            operand, operation = processes.clearing(operand, operation, 0)
-            """Meeting closing branch we make all possible calculating till first opening branch"""
+        if check.is_operand(token):
 
-        elif token == '-' and ex == '(':
+            operator, i = check.what_operator(expression, i)
 
-            operand.append(1)
-            operand.append(-0.1)
-            expression = expression[1:]
-            """Program goes to the end of expression, calculates it and makes negative"""
+            while (
+                operators
+                and operators[-1] != 0
+                and processes.priority(operators[-1])
+                >= processes.priority(operator)
+            ):
+                operators, numbers = processes.clearing(operators, numbers)
 
-    operand, operation = processes.clearing(operand, operation)
-    """clears stack when it is the end"""
+            operators.append(operator)
+            expecting_numbers = True
+            continue
 
-    return operation.pop()
+    while operators:
+        operators, numbers = processes.clearing(operators, numbers)
+
+    if len(numbers) != 1:
+        raise ValueError("Sorry, your expression is incorrect")
+
+    return numbers.pop()

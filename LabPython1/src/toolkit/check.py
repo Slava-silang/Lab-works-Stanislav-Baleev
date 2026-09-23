@@ -1,22 +1,32 @@
 def is_num(tok):
-    return tok in '0123456789'
+    return tok in '0123456789.'
 
 
 def is_operand(tok):
-    return tok in '+*/(|%'
+    return tok in '+*/(%-'
 
+def what_operator(expression, i):
+    token = expression[i]
 
-def what_operand(tok):
-    match tok:
+    if token == '/' and len(expression) > i + 1 and expression[i+1] == '/':
+        operator = -3
+        i += 2
+    elif token == '/':
+        operator = -2
+        i += 1
+
+    match token:
         case '+':
-            return 1
+            operator = 1
+            i += 1
+        case '-':
+            operator = -1
+            i += 1
         case '*':
-            return 2
-        case '/':
-            return -2
-        case '(':
-            return 0
-        case '|':
-            return -3
+            operator = 2
+            i += 1
         case '%':
-            return 3
+            operator = 3
+            i += 1
+
+    return operator, i

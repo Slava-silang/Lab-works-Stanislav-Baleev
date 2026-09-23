@@ -50,14 +50,10 @@ def help_user():
     """)
 
 def main():
-    if len(sys.argv) < 2 or sys.argv[1] == "--help":
-
+    if len(sys.argv) < 3 or sys.argv[1] == "--help":
         help_user()
 
     elif sys.argv[1] == "calc":
-
-        errors.check_expression(sys.argv[2])
-
         result = calculator.polish_calc(sys.argv[2])
         history.save_history(sys.argv[2], result)
         print(result)
