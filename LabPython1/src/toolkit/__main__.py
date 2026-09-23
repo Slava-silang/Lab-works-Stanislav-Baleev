@@ -1,7 +1,7 @@
 import argparse
 import sys
 
-from . import calculator, converter, errors, history
+from . import calculator, converter, history
 
 
 def help_user():
@@ -33,7 +33,18 @@ def help_user():
     |        --from        Source unit.                         |
     |        --to          Target unit.                         |
     |    Examples:                                              |
-    |        python -m toolkit convert 10 --from km --to miles  |
+    |        python -m toolkit convert 10 --from km --to mm     |
+    |    Allows:                                                |
+    |        km: kilometer                                      |
+    |        m: meter                                           |                
+    |        dm: decimeter                                      |
+    |        cm: centimeter                                     |
+    |        mm: millimeter                                     |
+    |        kg: kilogram                                       |
+    |        g: gram                                            |
+    |        c: celsius                                         |
+    |        k: kelvin                                          |
+    |        f: fahrenheit                                      |
     |--help                                                     |
     |    Display this help message.                             |
     |    Example:                                               |
@@ -48,38 +59,49 @@ def help_user():
     |    python -m toolkit --help                               |
     |___________________________________________________________|
     """)
+    return 0
+
 
 def main():
     if len(sys.argv) < 3 or sys.argv[1] == "--help":
         help_user()
 
     elif sys.argv[1] == "calc":
-        result = calculator.polish_calc(sys.argv[2])
-        history.save_history(sys.argv[2], result)
-        print(result)
+        try:
+            result = calculator.polish_calc(sys.argv[2])
+            print(result)
+            history.save_history(sys.argv[2], result)
+            return 0
+
+        except (SyntaxError, ValueError, ZeroDivisionError) as error:
+            print(error, file=sys.stderr)
+            return 2
 
     elif sys.argv[1] == "convert":
-
         if len(sys.argv) < 5:
             help_user()
 
         parser = argparse.ArgumentParser()
 
-        parser.add_argument('command')
-        parser.add_argument('amount')
-        parser.add_argument('--from', dest="from_")
-        parser.add_argument('--to', dest="to")
+        parser.add_argument("command")
+        parser.add_argument("amount")
+        parser.add_argument("--from", dest="from_")
+        parser.add_argument("--to", dest="to")
 
         args = parser.parse_args()
 
-        errors.check_units(amount=args.amount, from_=args.from_, to=args.to)
+        try:
+            result = converter.converter(args.amount, args.from_, args.to)
+            print(result)
+            return 0
 
-        print(converter.converter(args.amount, args.from_, args.to))
+        except (ValueError, ZeroDivisionError) as error:
+            print(error, file=sys.stderr)
+            return 2
 
     else:
-
         help_user()
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

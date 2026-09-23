@@ -3,38 +3,40 @@ from re import findall
 
 from . import constants
 
+
 def check_expression(expression: str = ""):
     if len(expression) == 0:
         raise ValueError("Sorry, your expression is empty.")
 
-    if '..' in expression:
+    if ".." in expression:
         raise SyntaxError("Sorry, your expression is incorrect")
 
     if len(findall(r"[-+/*%]\)|\([*/%]", expression)):
         raise SyntaxError("Sorry, your expression is incorrect")
 
-    if '()' in expression:
+    if "()" in expression:
         raise SyntaxError("Sorry, your expression is incorrect")
 
     branches = []
 
     for i in range(len(expression)):
+        allowed = "0123456789-+/*%()."
 
-        allowed = '0123456789-+/*%().'
-
-        if i == len(expression) - 1 and expression[i] in '-+':
+        if i == len(expression) - 1 and expression[i] in "-+":
             raise SyntaxError("Sorry, your expression is incorrect")
 
         if expression[i] not in allowed:
             raise SyntaxError(f"Sorry, unknown character {expression[i]}")
 
-        if expression[i] == '(':
+        if expression[i] == "(":
             branches.append(0)
 
-        if expression[i] == ')':
+        if expression[i] == ")":
             branches.append(1)
 
-    if len(branches) > 0 and (branches[0] == 1 or branches[-1] == 0 or branches.count(0) != branches.count(1)):
+    if len(branches) > 0 and (
+        branches[0] == 1 or branches[-1] == 0 or branches.count(0) != branches.count(1)
+    ):
         raise SyntaxError("Sorry, your branches is incorrect")
 
     if len(branches) == len(expression):
@@ -42,12 +44,10 @@ def check_expression(expression: str = ""):
 
     opened = []
     for i in branches:
-
-        if i == '(':
+        if i == "(":
             opened.append(1)
 
-        if i == ')':
-
+        if i == ")":
             if len(opened) == 0:
                 raise SyntaxError("Sorry, your branches is incorrect")
 
@@ -56,7 +56,6 @@ def check_expression(expression: str = ""):
 
 
 def check_units(amount: float, from_: str, to: str):
-
     amount = float(amount)
 
     with open(constants.CONFIG_PATH, "r", encoding="utf-8") as file:
@@ -73,16 +72,18 @@ def check_units(amount: float, from_: str, to: str):
         if to in group_units:
             to_group = group
 
+    if from_group is None or to_group is None:
+        raise SyntaxError("sorry, unknown unit")
+
     if from_group != to_group:
         raise ValueError(f"Sorry, we cannot convert {from_} to {to}")
 
     if from_group == "temperature":
-
-        if from_ == 'c' and amount < constants.ABSOLUTE_ZERO_C:
+        if from_ == "c" and amount < constants.ABSOLUTE_ZERO_C:
             raise ValueError("Sorry, temperature cannot be under absolute zero")
 
-        if from_ == 'k' and amount < constants.ABSOLUTE_ZERO_K:
+        if from_ == "k" and amount < constants.ABSOLUTE_ZERO_K:
             raise ValueError("Sorry, temperature cannot be under absolute zero")
 
-        if from_ == 'f' and amount < constants.ABSOLUTE_ZERO_F:
+        if from_ == "f" and amount < constants.ABSOLUTE_ZERO_F:
             raise ValueError("Sorry, temperature cannot be under absolute zero")

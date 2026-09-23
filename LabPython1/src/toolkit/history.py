@@ -14,10 +14,7 @@ def save_history(expression, result):
     else:
         history = []
 
-    history.append({
-        "expression": expression,
-        "result": result
-    })
+    history.append({"expression": expression, "result": result})
 
     with open(constants.HISTORY_PATH, "w", encoding="utf-8") as file:
         json.dump(history, file, ensure_ascii=False, indent=4)

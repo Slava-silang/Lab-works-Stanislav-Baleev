@@ -1,8 +1,8 @@
-from . import check, make_number, processes, errors
+from . import check, errors, make_number, processes
 
 
 def processing(expression):
-    expression = expression.replace(' ', '')
+    expression = expression.replace(" ", "")
     """Makes work easier because we dont need to process spaces"""
 
     return expression
@@ -20,7 +20,6 @@ def polish_calc(expression):
     expecting_numbers = True
 
     while i < len(expression):
-
         token = expression[i]
 
         if check.is_num(token):
@@ -32,11 +31,11 @@ def polish_calc(expression):
             expecting_numbers = False
             continue
 
-        if token == '+' and expecting_numbers:
+        if token == "+" and expecting_numbers:
             i += 1
             continue
 
-        if token == '-' and expecting_numbers:
+        if token == "-" and expecting_numbers:
             i += 1
             start = i
 
@@ -45,14 +44,13 @@ def polish_calc(expression):
             expecting_numbers = False
             continue
 
-        if token == '(':
+        if token == "(":
             operators.append(0)
             expecting_numbers = True
             i += 1
             continue
 
-        if token == ')':
-
+        if token == ")":
             while operators and operators[-1] != 0:
                 operators, numbers = processes.clearing(operators, numbers)
 
@@ -62,14 +60,12 @@ def polish_calc(expression):
             continue
 
         if check.is_operand(token):
-
             operator, i = check.what_operator(expression, i)
 
             while (
                 operators
                 and operators[-1] != 0
-                and processes.priority(operators[-1])
-                >= processes.priority(operator)
+                and processes.priority(operators[-1]) >= processes.priority(operator)
             ):
                 operators, numbers = processes.clearing(operators, numbers)
 
@@ -81,6 +77,6 @@ def polish_calc(expression):
         operators, numbers = processes.clearing(operators, numbers)
 
     if len(numbers) != 1:
-        raise ValueError("Sorry, your expression is incorrect")
+        raise SyntaxError("Sorry, your expression is incorrect")
 
     return numbers.pop()

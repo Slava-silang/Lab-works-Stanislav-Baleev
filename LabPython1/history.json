@@ -78,5 +78,101 @@
     {
         "expression": "(-10 + 4) * (3 + 2) / 5 + 17 % 4",
         "result": -5.0
+    },
+    {
+        "expression": "2 + 3",
+        "result": 5.0
+    },
+    {
+        "expression": "2 + 3",
+        "result": 5.0
+    },
+    {
+        "expression": "2 + 3",
+        "result": 5.0
+    },
+    {
+        "expression": "2 + 3",
+        "result": 5.0
+    },
+    {
+        "expression": "2 + 3",
+        "result": 5.0
+    },
+    {
+        "expression": "2+3",
+        "result": 5.0
+    },
+    {
+        "expression": "2+3",
+        "result": 5.0
+    },
+    {
+        "expression": "2+3",
+        "result": 5.0
+    },
+    {
+        "expression": "2+3",
+        "result": 5.0
+    },
+    {
+        "expression": "2+3",
+        "result": 5.0
+    },
+    {
+        "expression": "2+3",
+        "result": 5.0
+    },
+    {
+        "expression": "2+3",
+        "result": 5.0
+    },
+    {
+        "expression": "2+3",
+        "result": 5.0
+    },
+    {
+        "expression": "2+3",
+        "result": 5.0
+    },
+    {
+        "expression": "2 + 3",
+        "result": 5.0
+    },
+    {
+        "expression": "2 + 3",
+        "result": 5.0
+    },
+    {
+        "expression": "-2*-3",
+        "result": 6.0
+    },
+    {
+        "expression": "2 + 3",
+        "result": 5.0
+    },
+    {
+        "expression": "2 + 3",
+        "result": 5.0
+    },
+    {
+        "expression": "2 + 3",
+        "result": 5.0
+    },
+    {
+        "expression": "2 + 3",
+        "result": 5.0
+    },
+    {
+        "expression": "2 + 3",
+        "result": 5.0
+    },
+    {
+        "expression": "2 + 3",
+        "result": 5.0
+    },
+    {
+        "expression": "2 + 3",
+        "result": 5.0
     }
 ]
