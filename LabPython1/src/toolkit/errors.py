@@ -5,6 +5,8 @@ from . import constants
 
 
 def check_expression(expression: str = ""):
+    """Checks almost all possible to find before calculating
+    errors in expression."""
     if len(expression) == 0:
         raise ValueError("Sorry, your expression is empty.")
 
@@ -56,6 +58,8 @@ def check_expression(expression: str = ""):
 
 
 def check_units(amount: float, from_: str, to: str):
+    """Checks unit compatibility and whether
+    temperature is above absolute zero."""
     amount = float(amount)
 
     with open(constants.CONFIG_PATH, "r", encoding="utf-8") as file:

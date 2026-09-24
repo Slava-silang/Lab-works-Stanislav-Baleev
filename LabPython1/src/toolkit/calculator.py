@@ -2,16 +2,18 @@ from . import check, errors, make_number, processes
 
 
 def processing(expression):
+    """This function processes expression for faster work."""
     expression = expression.replace(" ", "")
-    """Makes work easier because we dont need to process spaces"""
 
     return expression
 
 
 def polish_calc(expression):
+    """The main function of calculator. Makes calls to other functions.
+    Parses the expression and returns the answer. Also manages
+    unary + and - and branches."""
     numbers = []
     operators = []
-    """Makes stack for operands and numbers"""
 
     expression = processing(expression)
     errors.check_expression(expression)
@@ -59,7 +61,7 @@ def polish_calc(expression):
             i += 1
             continue
 
-        if check.is_operand(token):
+        if check.is_operator(token):
             operator, i = check.what_operator(expression, i)
 
             while (

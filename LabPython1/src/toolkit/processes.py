@@ -1,4 +1,5 @@
 def calculating(operator: int, second: float, first: float):
+    """Performs calculating depending on the operator."""
     res = 0
 
     match operator:
@@ -30,6 +31,8 @@ def calculating(operator: int, second: float, first: float):
 
 
 def priority(operator: int):
+    """Makes correct calculating by
+    returning the priority of operator"""
     if operator in [1, -1]:
         return 1
 
@@ -40,6 +43,8 @@ def priority(operator: int):
 
 
 def clearing(operators: list, numbers: list):
+    """Directs numbers and operator to calculating def
+    and returns result."""
     if not operators:
         return operators, numbers
 

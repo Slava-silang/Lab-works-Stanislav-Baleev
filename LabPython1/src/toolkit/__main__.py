@@ -63,6 +63,8 @@ def help_user():
 
 
 def main():
+    """The Main function. Launch when user write toolkit. With this function
+    Python launch all tools. Also return errors and manage history."""
     if len(sys.argv) < 3 or sys.argv[1] == "--help":
         help_user()
 

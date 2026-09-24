@@ -4,11 +4,14 @@ from . import constants, errors
 
 
 def load_units():
+    """Loads units from configuration file."""
     with open(constants.CONFIG_PATH, "r", encoding="utf-8") as file:
         return json.load(file)
 
 
 def converter(amount, from_, to):
+    """Converts from unit_1 to unit_2 by looking for
+    ratios of units in configuration file."""
     errors.check_units(amount, from_, to)
 
     units = load_units()

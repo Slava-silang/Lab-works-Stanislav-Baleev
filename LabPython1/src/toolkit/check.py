@@ -1,12 +1,16 @@
-def is_num(tok):
-    return tok in "0123456789."
+def is_num(token):
+    """Check whether token is number ot its part."""
+    return token in "0123456789."
 
 
-def is_operand(tok):
-    return tok in "+*/(%-"
+def is_operator(token):
+    """Check whether token is operator."""
+    return token in "+*/(%-"
 
 
 def what_operator(expression, i):
+    """Makes tokenization and return result.
+    Also check whether it is // or /"""
     token = expression[i]
 
     if token == "/" and len(expression) > i + 1 and expression[i + 1] == "/":
